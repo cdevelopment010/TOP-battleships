@@ -1,0 +1,35 @@
+
+.boards {
+    display: flex; 
+    gap: 50px; 
+}
+.board {
+    width: 30vw; 
+    height: 30vw;
+}
+.gameboard {
+    display: grid; 
+    grid-template-columns: repeat(10, minmax(20px,1fr));
+    grid-template-rows: repeat(10, minmax(20px,1fr));
+
+    div {
+        max-height: 100px;
+        height: 100%; 
+        max-width: 100px;
+        width: 100%;  
+        outline: 1px solid black; 
+    }
+}
+
+
+.ship {
+    background-color: blue;
+}
+
+.hit {
+    background-color: red;
+}
+
+.miss {
+    background-color: yellow;
+}
