@@ -105,6 +105,36 @@ article {
     }
 }
 
+//ships 
+.ship-container {
+    display: flex; 
+    &.vertical{
+        flex-direction: column;
+    }
+
+    .square {
+        height: 50px;
+        width: 50px; 
+        background-color: $ship-bg;
+        border: 1px dashed white; 
+    }
+}
+
+
+.page2 {
+    .container {
+        margin-top: 20px; 
+        display: grid; 
+        gap: 20px; 
+    }
+}
+
+
+// draggables
+.dragging {
+    opacity: 0.5;
+}
+
 // footer
 footer {
 
