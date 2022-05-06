@@ -3,7 +3,9 @@ const game = () => {
 
     const form = document.querySelector('form'); 
     const formBtn = document.querySelector('form button'); 
-    const playerControl = playerController(); 
+    const playerControl = playerController();         
+    let currentShip;
+    let ships;
 
     // new game
     const newGame = (e) => {
@@ -12,6 +14,7 @@ const game = () => {
         playerControl.createPlayer(form.querySelector('input').value);  
         form.querySelector('input').value = ''; 
         createBoard(); 
+        showShips(); 
         placeShips(); 
     }
 
@@ -31,27 +34,10 @@ const game = () => {
                     cell.setAttribute('data-key', key);
                     if (key == 1) {
                         // event listener?
-                        cell.addEventListener('click', function() {
-                            console.log(this); 
-                            let { status, aiStatus, xAi, yAi }= playerControl.attack(i, j); 
-                            if (status == 'hit') {
-                                document.querySelector(`[data-key='1'][data-x='${i}'][data-y='${j}']`).classList.add('hit'); 
-                                console.log("check", document.querySelector(`[data-key='1'][data-x='${i}'][data-y='${j}']`)); 
-                            } else if (status == 'miss') {
-                                document.querySelector(`[data-key='1'][data-x='${i}'][data-y='${j}']`).classList.add('miss'); 
-                            }
-
-                            // update aiAttack
-                            if (aiStatus == 'hit') {
-                                document.querySelector(`[data-key='0'][data-x='${xAi}'][data-y='${yAi}']`).classList.add('hit'); 
-                                console.log("check", document.querySelector(`[data-key='0'][data-x='${i}'][data-y='${j}']`)); 
-                            } else if (aiStatus == 'miss') {
-                                document.querySelector(`[data-key='0'][data-x='${xAi}'][data-y='${yAi}']`).classList.add('miss'); 
-                                console.log("check", document.querySelector(`[data-key='0'][data-x='${i}'][data-y='${j}']`)); 
-                            }
+                        cell.addEventListener('click', function(){
+                            attack(i, j)
                         })
                     }
-                    
                     row.append(cell); 
                 }
                 container.append(row);
@@ -61,35 +47,99 @@ const game = () => {
         })
     }
 
+    function showShips() {
+        let main = document.querySelector('main'); 
+        const shipsContainer = document.createElement('article'); 
+        const ships = [4,4,2,2,1,1,1]; 
+        for(let i = 0; i < ships.length; i++) {
+            const div = document.createElement('div'); 
+            for (let j = 0; j < ships[i]; j++) {
+                let square = document.createElement('div'); 
+                square.className = 'square'; 
+                div.append(square); 
+            }
+            div.className = `ship ship${ships[i]}`; 
+            div.setAttribute('data-length', ships[i]); 
+            shipsContainer.append(div); 
+        }
+        // shipsContainer.insertAdjacentElement("beforeend")
+        main.insertAdjacentElement("afterend",shipsContainer); 
+    }
+
     // randomly place ships (this is just for now)
+    function placeShipsAI() {
+        const ships = [4,4,2,2,1,1,1]; 
+    }
+
+
+
+    function placeShipOnClick() {
+        // remove selected from all other ships;
+        ships.forEach(ship => ship.classList.remove('selected')); 
+        currentShip = this; 
+        this.classList.add('selected'); 
+    }
 
     const placeShips = () => {
-        const ships = [4,4,2,2,1,1,1]; 
         let players = playerControl.getPlayers(); 
-        console.log(players[0].gameboard); 
-        players.forEach(player => {
-                
-            player.gameboard.placeShip(0,0,4); 
-            player.gameboard.placeShip(6,0,4); 
-            player.gameboard.placeShip(2,2,2); 
-            player.gameboard.placeShip(4,8,2); 
-            player.gameboard.placeShip(0,9,1); 
-            player.gameboard.placeShip(9,8,1); 
-            player.gameboard.placeShip(6,5,1); 
+        ships = document.querySelectorAll('article .ship'); 
+        console.log(ships); 
+
+        ships.forEach(ship => {
+            ship.addEventListener('click', placeShipOnClick.bind(ship), {once: true})
         })
 
-        players[0].gameboard.getBoard().forEach((row, rIndex) => {
-            row.forEach((col, cIndex) => {
-                if(col == 'SHIP'){
-                    document.querySelector(`[data-x='${rIndex}'][data-y='${cIndex}']`).classList.add('ship'); 
-                }
-            })
-        }); 
-    }
+
+        const playerBoard = document.querySelector('.board1 .gameboard'); 
+        console.log(playerBoard); 
+        for (let i = 0; i <= 9; i++) {
+            for(let j = 0; j <= 9; j++) {
+                let cell = document.querySelector(`[data-key='0'][data-x='${i}'][data-y='${j}']`); 
+                cell.addEventListener('click', function() {
+                    if (cell.classList.contains('ship')) {
+                        alert(`can't place ship here`); 
+                    }
+                    if (currentShip != null & !cell.classList.contains('ship')) {
+                        console.log("place ship"); 
+                        let len = currentShip.getAttribute('data-length');
+                        players[0].gameboard.placeShip(i, j, len); 
+                        currentShip.classList.remove('selected'); 
+                        currentShip.classList.add('used'); 
+                        // currentShip.removeEventListener('click', placeShipOnClick.bind(currentShip)); 
+                        currentShip = null;
+                        for(let k = 0; k < len; k++) {
+                            document.querySelector(`[data-key='0'][data-x='${i+k}'][data-y='${j}']`).classList.add('ship');
+                        } 
+                    }
+                })
+            }
+        }
+    };
 
     // check winner
 
 
+
+
+    // attack
+    function attack(i, j) {
+        let { status, aiStatus, xAi, yAi }= playerControl.attack(i, j); 
+        if (status == 'hit') {
+            document.querySelector(`[data-key='1'][data-x='${i}'][data-y='${j}']`).classList.add('hit'); 
+            console.log("check", document.querySelector(`[data-key='1'][data-x='${i}'][data-y='${j}']`)); 
+        } else if (status == 'miss') {
+            document.querySelector(`[data-key='1'][data-x='${i}'][data-y='${j}']`).classList.add('miss'); 
+        }
+
+        // update aiAttack
+        if (aiStatus == 'hit') {
+            document.querySelector(`[data-key='0'][data-x='${xAi}'][data-y='${yAi}']`).classList.add('hit'); 
+            console.log("check", document.querySelector(`[data-key='0'][data-x='${i}'][data-y='${j}']`)); 
+        } else if (aiStatus == 'miss') {
+            document.querySelector(`[data-key='0'][data-x='${xAi}'][data-y='${yAi}']`).classList.add('miss'); 
+            console.log("check", document.querySelector(`[data-key='0'][data-x='${xAi}'][data-y='${yAi}']`)); 
+        }
+    }
 
     form.addEventListener('submit', newGame); 
     formBtn.addEventListener('click', newGame); 
