@@ -7,8 +7,63 @@
 }
 
 body {
+    min-height: 100vh; 
     display: flex; 
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     gap: 1.5em;
+    font-family: 'Roboto', sans-serif;
+    background-color: $body-bg;
+    color: white; 
+}
+footer {
+    min-height: 10vh; 
+    width: 100vw; 
+    display: flex; 
+    justify-content: space-around; 
+    align-items:center;
+    background-color: $footer-bg;
+}
+.page {
+    min-height: 80vh; 
+    height: 100%;  
+    padding-top: 10vh; 
+    display: grid;
+}
+a {
+    color: inherit; 
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    
+    button {
+        align-self: flex-end;
+    }
+}
+
+button {
+    padding: 0px 25px; 
+    border-radius: 2px; 
+    outline: none; 
+    border: 1px solid transparent; 
+    cursor: pointer; 
+
+}
+
+h1 {
+    font-family: 'Black Ops One', cursive;
+    font-size: 3rem;
+    letter-spacing: 0.2em;
+}
+
+.hidden {
+    display: none; 
+}
+
+canvas {
+    background-color: $board-bg; 
+    cursor: pointer;
 }
