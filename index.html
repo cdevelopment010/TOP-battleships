@@ -5,21 +5,65 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOP | Battleships</title>
+
+    <script src="https://kit.fontawesome.com/48e9ba994a.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-    <h1>Battleships</h1>
+    
+    <main>
+        <section class="page page1">
+            <h1>Battleships</h1>
+            <form action="#">
+                <label for="username">Enter your username:</label>
+                <input type="text" name="username" id="username">
+                <button type="button" class="btn-primary" id="btn-username"><i class="fa-solid fa-arrow-right-long fa-2x"></i></button>
+            </form>
+        </section>
 
-    <form action="#">
-        <input type="text" name="playerName" id="playerName" placeholder="Your Name...">
-        <button type="button">Let's play!</button>
-    </form>
+
+        <section class="page page2 hidden">
+            <h1>Get ready for battle</h1>
+            <p>Place your ships</p>
+            <canvas class="board"></canvas>
+
+            <div class="container">
+                <div>
+                    <p>Ship to place</p>
+                </div>  
+                <div>
+                    <p>Ships still to place</p>
+                </div>
+            </div>
+        </section>
 
 
-    <main class="boards">
-        <section class="board board1"></section>
-        <section class="board board2"></section>
+        <section class="page page3 hidden">
+            <h1>Battle</h1>
+        </section>
+
+        <section class="page page4 hidden">
+            <h1>Gameover</h1>
+            <h2 class="winner"></h2>
+            <p>Ships remaining:</p>
+            <div class="btn-group">
+                <button type="button">Rematch</button>
+                <button type="button">New Player</button>
+            </div>
+        </section>
     </main>
+
+    <footer>
+        <ul class="TOP">
+            <li></li>
+        </ul>
+
+        <ul class="Socials">
+            <li><a href="#" target="_blank"><i class="fa-solid fa-globe"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fa-brands fa-youtube"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+        </ul>
+    </footer>
 
     <script src="./main.js"></script>
 </body>
