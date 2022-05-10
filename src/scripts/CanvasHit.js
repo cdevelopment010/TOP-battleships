@@ -10,6 +10,7 @@ function canvasHit(x, y, canvas, status) {
     console.log("rect to place", x*50, y*50);
     ctx.rect(x*50, y*50, 50, 50);
     ctx.fill(); 
+    ctx.stroke(); 
 
     if (status == 'hit') {
         ctx.beginPath();

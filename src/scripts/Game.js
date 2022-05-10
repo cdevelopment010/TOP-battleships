@@ -350,7 +350,8 @@ const game = (() => {
                 // playerControl.updatePlayer(); 
                 console.log(gameover.status); 
                 if (gameover.status == true) {
-                    nextScreen('page3', 'page4')
+                    nextScreen('page3', 'page4'); 
+                    winner(); 
                 }
 
             }    
@@ -387,6 +388,25 @@ const game = (() => {
             playerControl.getPlayers()[1].gameboard.placeShip(shipPlacementAI[ship].position[0], 
             shipPlacementAI[ship].position[1], shipPlacementAI[ship].length, shipPlacementAI[ship].direction)
         }
+    }
+
+
+    // functions for game over
+    function winner() {
+        let winnerDiv = document.querySelector('.page4 .winner'); 
+        let winner; 
+        // player won
+        if (playerControl.checkWinner()) {
+            console.log("current player", playerControl.getCurrentPlayer()); 
+            console.log(playerControl.getPlayers()[playerControl.getCurrentPlayer()]);
+            winner = playerControl.getPlayers()[playerControl.getCurrentPlayer()]; 
+        } else {
+            // AI won
+            winner = playerControl.getPlayers()[1]; 
+        }
+
+
+        winnerDiv.innerText = winner.player; 
     }
 
     // General functions

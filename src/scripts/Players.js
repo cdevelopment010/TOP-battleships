@@ -92,6 +92,9 @@ const playerController = () => {
             // AI turn
             let { aiStatus, xAi, yAi } = randomAIMove(); 
             canvasHit(xAi, yAi, playerCanvas, aiStatus); 
+            if (aiStatus == true) {
+                status = aiStatus; 
+            }
             return {status, aiStatus, xAi, yAi};
         }
     }
