@@ -14,7 +14,7 @@
     <main>
         <section class="page page1">
             <h1>Battleships</h1>
-            <form action="#">
+            <form action="#" autocomplete="off">
                 <label for="username">Enter your username:</label>
                 <input type="text" name="username" id="username">
                 <button type="button" class="btn-primary" id="btn-username"><i class="fa-solid fa-arrow-right-long fa-2x"></i></button>
@@ -26,6 +26,7 @@
             <p>Place your ships</p>
             <canvas class="board"></canvas>
 
+            <button type="button" id="btn-to-page3" class="btn-primary hidden">Let's battle!</button>
             <div class="container">
                 <p>Ships to place (click to rotate, drag to place)</p>
                 <div class="ship-container"></div>
@@ -39,6 +40,16 @@
 
         <section class="page page3 hidden">
             <h1>Battle</h1>
+            <div class="container">
+                <div class="player">
+                    <p>Player</p>
+                    <canvas></canvas>
+                </div>
+                <div class="AI">
+                    <p>AI</p>
+                    <canvas></canvas>
+                </div>
+            </div>
         </section>
 
         <section class="page page4 hidden">

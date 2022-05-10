@@ -1,3 +1,7 @@
+// import styleCanvas from "./Canvas";
+// import canvasHit from "./CanvasHit";
+const styleCanvas = require('./Canvas'); 
+const canvasHit = require('./CanvasHit'); 
 const Gameboard = require("./Gameboard");
 // import Gameboard from "./Gameboard";
 
@@ -7,6 +11,10 @@ const Players = (name) => {
 
 
 const playerController = () => {
+    const canvas = styleCanvas('.page3'); 
+        
+    const playerCanvas = canvas[0];
+    const aiCanvas = canvas[1];
 
     let player1; 
     let player1Gameboard = Gameboard();
@@ -56,20 +64,34 @@ const playerController = () => {
 
     }
 
+
+    const isValidAttack =  (x, y) => {
+        let valid = false;
+
+        if (players[opponent].gameboard.getBoard()[x][y] == 'hit' || players[opponent].gameboard.getBoard()[x][y] == 'miss') {
+            return valid;
+        } else {
+            valid = true; 
+        }
+
+        return valid; 
+    }
+
     const attack = (x, y) => {
         let validCoords = false;
         let status;
-        if(players[opponent].gameboard.getBoard()[x][y] == 'hit' | players[opponent].gameboard.getBoard()[x][y] == 'miss') {
+        if(players[opponent].gameboard.getBoard()[x][y] == 'hit' || players[opponent].gameboard.getBoard()[x][y] == 'miss') {
             //try again - coordinates aren't valid;
             console.log(`Try again! You have already attacked this spot ${x}, ${y}`); 
         } else {
             validCoords = true; 
             status = players[opponent].gameboard.receiveAttack(x, y);
+            canvasHit(x, y, aiCanvas, status); 
             // update player
             updatePlayer(); 
             // AI turn
             let { aiStatus, xAi, yAi } = randomAIMove(); 
-            console.log("player attack aiStatus",aiStatus)
+            canvasHit(xAi, yAi, playerCanvas, aiStatus); 
             return {status, aiStatus, xAi, yAi};
         }
     }

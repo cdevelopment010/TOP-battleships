@@ -2,6 +2,7 @@ const path = require('path');
 
 
 module.exports = {
+    target: ['web', 'es5', 'es6'],
     mode: 'development',
     entry: './src/index.js',
     output: {

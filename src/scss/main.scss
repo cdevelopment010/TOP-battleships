@@ -127,6 +127,21 @@ article {
         display: grid; 
         gap: 20px; 
     }
+
+    button {
+        font-size: 1.2em; 
+        
+    }
+}
+
+
+.page3 {
+    .container {
+        margin-top: 20px; 
+        display: grid; 
+        grid-template-columns: 1fr 1fr;
+        gap: 20px; 
+    }
 }
 
 
