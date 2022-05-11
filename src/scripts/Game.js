@@ -79,6 +79,13 @@ const game = (() => {
         battlePage(); 
     }); 
 
+    newPlayer.addEventListener('click', () => {
+        nextScreen('page4', 'page1'); 
+        username.value = ''; 
+        //reset player controller.
+        playerControl = playerController(); 
+    })
+
 
     rematch.addEventListener('click', () => {
         nextScreen('page4', 'page2'); 
@@ -91,31 +98,14 @@ const game = (() => {
         playerControl.getPlayers()[0].gameboard.resetGameboard(); 
         playerControl.getPlayers()[1].gameboard.resetGameboard(); 
 
-        //delete ship containers then remake - should solve issue with duplicating event listeners
-        let shipcontainers = document.querySelectorAll('.page .ship-container'); 
-        shipcontainers.forEach(container => {
-            container.remove(); 
-        })
-
-        for (let i = 0; i<5; i++) {
-            let div = document.createElement('div'); 
-            div.classList.add('ship-container');
-            document.querySelector('.page2 .container').append(div); 
-        }
-
-
-        //reset variables
-        gridPopulated = [];
-        gridPopulatedAI = []; 
-
-        document.querySelector('.page2 .container').classList.remove('hidden');
-        document.querySelector('.page2 button').classList.add('hidden');
-
+        reset(); 
         generateShips(); 
         //create canvas to place ships
         let canvas = styleCanvas('.page2');  
 
     })
+
+
 
 
 
@@ -143,6 +133,7 @@ const game = (() => {
     }
 
     function startGame() {
+        reset(); 
         let usernamePass = validateUsername(); 
         if (!usernamePass) {
             return; 
@@ -485,6 +476,28 @@ const game = (() => {
         document.querySelector(`.${next}`).classList.remove('hidden'); 
     }
 
+    function reset() {
+        //delete ship containers then remake - should solve issue with duplicating event listeners
+        let shipcontainers = document.querySelectorAll('.page .ship-container'); 
+        shipcontainers.forEach(container => {
+            container.remove(); 
+        })
+
+        for (let i = 0; i<5; i++) {
+            let div = document.createElement('div'); 
+            div.classList.add('ship-container');
+            document.querySelector('.page2 .container').append(div); 
+        }
+
+
+        //reset variables
+        gridPopulated = [];
+        gridPopulatedAI = []; 
+
+        document.querySelector('.page2 .container').classList.remove('hidden');
+        document.querySelector('.page2 button').classList.add('hidden');
+
+    }
 
 
     return {
