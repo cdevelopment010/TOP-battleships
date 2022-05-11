@@ -48,22 +48,6 @@
     }
 }
 
-.ship {
-    z-index: 100; 
-    background-color: blue;
-}
-
-
-.hit {
-    z-index: 100; 
-    background-color: red;
-}
-
-.miss {
-    z-index: 100; 
-    background-color: yellow;
-}
-
 article {
     width: 80vw; 
     display: flex;
@@ -105,6 +89,15 @@ article {
     }
 }
 
+.btn-secondary {
+    background-color: $btn-secondary; 
+    color: $primary-col; 
+
+    &:hover {
+        color: $btn-primary; 
+    }
+}
+
 //ships 
 .ship-container {
     display: flex; 
@@ -113,10 +106,14 @@ article {
     }
 
     .square {
-        height: 50px;
-        width: 50px; 
+        height: 30px;
+        width: 30px; 
         background-color: $ship-bg;
         border: 1px dashed white; 
+        @include resize('tablet') {
+            height: 50px;
+            width: 50px; 
+        }
     }
 }
 
@@ -139,8 +136,13 @@ article {
     .container {
         margin-top: 20px; 
         display: grid; 
-        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 20px; 
+        @include resize('tablet') {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr;
+        }
     }
 }
 

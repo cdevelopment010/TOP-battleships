@@ -27,6 +27,8 @@ footer {
 }
 .page {
     min-height: 80vh; 
+    width: 90%; 
+    margin-inline: auto; 
     height: 100%;  
     padding-top: 10vh; 
     display: grid;
@@ -55,8 +57,13 @@ button {
 
 h1 {
     font-family: 'Black Ops One', cursive;
-    font-size: 3rem;
+    font-size: 2rem;
     letter-spacing: 0.2em;
+    text-align: center;
+
+    @include resize('tablet'){
+        font-size: 3rem;
+    }
 }
 
 .hidden {

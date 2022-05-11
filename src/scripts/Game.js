@@ -1,7 +1,6 @@
 /* 
 NOTES:
 - touch screen drag doesn't work
-- need to make mobile friendly
 - remove all the console.logs... 
 - make sure jest is still working...
 - refactor code...
@@ -16,6 +15,7 @@ const game = (() => {
     const username = document.getElementById('username'); 
     const rematch = document.getElementById('rematch-btn'); 
     const newPlayer = document.getElementById('new-player-btn'); 
+    let squareSize, canvasSize; 
 
     let gridPopulated = []; //use this to check coords of ship placement and to place on gameboard before screen 3; 
     let gridPopulatedAI = []; //use this to check coords of ship placement and to place on gameboard before screen 3; 
@@ -72,6 +72,16 @@ const game = (() => {
             position: [], 
             direction: 1
         }
+    }
+
+
+    if (window.innerWidth < 500) {
+        canvasSize = '300';
+        squareSize = 30; 
+    } else {
+        canvasSize = '500';
+        squareSize = 50; 
+
     }
 
     usernameBtn.addEventListener('click', startGame); 
@@ -183,8 +193,8 @@ const game = (() => {
 
         canvas.addEventListener('dragover', ( e ) => {
             e.preventDefault(); 
-            x = Math.floor(e.offsetX / 50) * 50; 
-            y = Math.floor(e.offsetY / 50) * 50; 
+            x = Math.floor(e.offsetX / squareSize) * squareSize; 
+            y = Math.floor(e.offsetY / squareSize) * squareSize; 
         })
 
         draggables.forEach((draggable, key) => {
@@ -201,11 +211,11 @@ const game = (() => {
 
 
                 //add check to see if drop ship is valid; 
-                let check = checkPlacement(x/50, y/50, size, direction, gridPopulated); 
+                let check = checkPlacement(x/squareSize, y/squareSize, size, direction, gridPopulated); 
                 if (check) {
                     dropShip(x, y, size, canvas, direction); 
                     updateShipObject(key, size, [x, y], direction, shipPlacement);
-                    let populated = populateGrid(x / 50, y/50, size, direction);
+                    let populated = populateGrid(x / squareSize, y/squareSize, size, direction);
                     gridPopulated.push(...populated);  
                     draggable.innerHTML = ''; 
                     finishShipPlacement(); 
@@ -234,9 +244,9 @@ const game = (() => {
         for (let i = 0; i < size; i++) {
             ctx.beginPath(); 
             if (direction === 'vertical' || direction === 0 ) {
-                ctx.rect(x, y+(50*i), 50, 50); 
+                ctx.rect(x, y+(squareSize*i), squareSize, squareSize); 
             } else {
-                ctx.rect(x+(50*i), y, 50, 50); 
+                ctx.rect(x+(squareSize*i), y, squareSize, squareSize); 
             }
             ctx.strokeStyle = 'white'; 
             ctx.setLineDash([2]);
@@ -308,8 +318,8 @@ const game = (() => {
         if (shipsRemaining === 0) {
             btnToPage3.classList.remove('hidden');  
             for(let ship in shipPlacement) {
-                playerControl.getPlayers()[0].gameboard.placeShip(shipPlacement[ship].position[0]/50, 
-                    shipPlacement[ship].position[1]/50, shipPlacement[ship].length, shipPlacement[ship].direction)
+                playerControl.getPlayers()[0].gameboard.placeShip(shipPlacement[ship].position[0]/squareSize, 
+                    shipPlacement[ship].position[1]/squareSize, shipPlacement[ship].length, shipPlacement[ship].direction)
             }
             document.querySelector('.page2 .container').classList.add('hidden'); 
         }
@@ -333,7 +343,7 @@ const game = (() => {
         // place player ships
         const playerShips = playerControl.getPlayers()[0].gameboard.getShips(); 
         playerShips.forEach(ship => {
-            dropShip(ship.coords[0][0]*50, ship.coords[0][1]*50, ship.shipToPlace.length, playerCanvas, ship.shipToPlace.getDirection())
+            dropShip(ship.coords[0][0]*squareSize, ship.coords[0][1]*squareSize, ship.shipToPlace.length, playerCanvas, ship.shipToPlace.getDirection())
 
         })
 
@@ -346,8 +356,8 @@ const game = (() => {
         aiCanvas.removeEventListener('click', e => {
         
             if (playerControl.getCurrentPlayer() == 0) {
-                let x = Math.floor(e.offsetX / 50);
-                let y = Math.floor(e.offsetY / 50);
+                let x = Math.floor(e.offsetX / squareSize);
+                let y = Math.floor(e.offsetY / squareSize);
                 gameover = playerControl.attack(x, y); 
                 // playerControl.updatePlayer(); 
                 console.log(gameover.status); 
@@ -365,8 +375,8 @@ const game = (() => {
         aiCanvas.addEventListener('click', e => {
             
             if (playerControl.getCurrentPlayer() == 0) {
-                let x = Math.floor(e.offsetX / 50);
-                let y = Math.floor(e.offsetY / 50);
+                let x = Math.floor(e.offsetX / squareSize);
+                let y = Math.floor(e.offsetY / squareSize);
                 gameover = playerControl.attack(x, y); 
                 // playerControl.updatePlayer(); 
                 console.log(gameover.status); 
