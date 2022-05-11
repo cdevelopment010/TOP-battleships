@@ -7,7 +7,6 @@ function canvasHit(x, y, canvas, status) {
 
     ctx.beginPath(); 
     ctx.fillStyle = style; 
-    console.log("rect to place", x*50, y*50);
     ctx.rect(x*50, y*50, 50, 50);
     ctx.fill(); 
     ctx.stroke(); 

@@ -1,8 +1,9 @@
 /* 
 NOTES:
 - touch screen drag doesn't work
-- go to final screen on game over
-- if sunk change all squares to show ship has been sunk
+- AI ship placement error (some overlapping?)
+- issue with gameboard after restarting - thinks the spot has already been hit
+    - think I need to recreate the canvas elementsto stop the event listeners firing multiple times
 - refactor code...
 */
 
@@ -10,11 +11,14 @@ import playerController from "./Players";
 import styleCanvas from "./Canvas";
 const game = (() => {
     const playerControl = playerController();      
-    let usernameBtn = document.getElementById('btn-username');
-    let btnToPage3 = document.getElementById('btn-to-page3');
-    let username = document.getElementById('username'); 
-    const gridPopulated = []; //use this to check coords of ship placement and to place on gameboard before screen 3; 
-    const gridPopulatedAI = []; //use this to check coords of ship placement and to place on gameboard before screen 3; 
+    const usernameBtn = document.getElementById('btn-username');
+    const btnToPage3 = document.getElementById('btn-to-page3');
+    const username = document.getElementById('username'); 
+    const rematch = document.getElementById('rematch-btn'); 
+    const newPlayer = document.getElementById('new-player-btn'); 
+
+    let gridPopulated = []; //use this to check coords of ship placement and to place on gameboard before screen 3; 
+    let gridPopulatedAI = []; //use this to check coords of ship placement and to place on gameboard before screen 3; 
     const shipPlacement = {
         'ship0': {
             length: 0, 
@@ -77,6 +81,41 @@ const game = (() => {
     }); 
 
 
+    rematch.addEventListener('click', () => {
+        nextScreen('page4', 'page2'); 
+
+        // reset gameboard
+        playerControl.getPlayers()[0].gameboard.resetGameboard(); 
+        playerControl.getPlayers()[1].gameboard.resetGameboard(); 
+
+        //delete ship containers then remake - should solve issue with duplicating event listeners
+        let shipcontainers = document.querySelectorAll('.page .ship-container'); 
+        shipcontainers.forEach(container => {
+            container.remove(); 
+        })
+
+        for (let i = 0; i<5; i++) {
+            let div = document.createElement('div'); 
+            div.classList.add('ship-container');
+            document.querySelector('.page2 .container').append(div); 
+        }
+
+
+        //reset variables
+        gridPopulated = [];
+        gridPopulatedAI = []; 
+
+        document.querySelector('.page2 .container').classList.remove('hidden');
+        document.querySelector('.page2 button').classList.add('hidden');
+
+        generateShips(); 
+        //create canvas to place ships
+        let canvas = styleCanvas('.page2');  
+
+    })
+
+
+
     // functions for screen 1 - username/welcome page 
 
     function validateUsername() {
@@ -120,7 +159,6 @@ const game = (() => {
     function generateShips() {
         let ships = [5,4,3,3,2]; 
         let shipContainer = document.querySelectorAll('.page2 .ship-container'); 
-        console.log(shipContainer); 
         for(let i = 0; i < ships.length; i++) {
             for (let j = 0; j < ships[i]; j++) {
                 const square = document.createElement('div'); 
@@ -132,13 +170,14 @@ const game = (() => {
             container.setAttribute('data-ship-number', key); 
             container.draggable = true; 
             container.classList.add('draggable'); 
-            container.addEventListener('click', () => {
-                container.classList.toggle('vertical'); 
-            })
+            container.addEventListener('click', toggleVertical)
         })
         manageDrag(); 
     }
 
+    function toggleVertical() {
+        this.classList.toggle('vertical'); 
+    }
 
     function manageDrag() {
         let draggables = document.querySelectorAll('.draggable'); 
@@ -179,6 +218,8 @@ const game = (() => {
                     gridPopulated.push(...populated);  
                     draggable.innerHTML = ''; 
                     finishShipPlacement(); 
+                    draggable.removeEventListener('click',toggleVertical); 
+                    draggable.classList.remove('vertical'); 
                     
                 } else {
                     return; 
@@ -321,6 +362,9 @@ const game = (() => {
         const aiCanvas = canvas[1];
         let gameover = false; 
 
+        // check gameboards - issue with rematch
+        console.table(playerControl.getPlayers()[0].gameboard.getBoard())
+        console.table(playerControl.getPlayers()[1].gameboard.getBoard())
 
         // place player ships
         const playerShips = playerControl.getPlayers()[0].gameboard.getShips(); 
@@ -338,6 +382,24 @@ const game = (() => {
             //manage gameover status
 
 
+
+
+
+        aiCanvas.removeEventListener('click', e => {
+        
+            if (playerControl.getCurrentPlayer() == 0) {
+                let x = Math.floor(e.offsetX / 50);
+                let y = Math.floor(e.offsetY / 50);
+                gameover = playerControl.attack(x, y); 
+                // playerControl.updatePlayer(); 
+                console.log(gameover.status); 
+                if (gameover.status == true) {
+                    nextScreen('page3', 'page4'); 
+                    winner(); 
+                }
+
+            }    
+        })
 
         //on click to signal attack
         
@@ -394,6 +456,7 @@ const game = (() => {
     // functions for game over
     function winner() {
         let winnerDiv = document.querySelector('.page4 .winner'); 
+        let shipsDiv = document.querySelector('.page4 .remaining-ships'); 
         let winner; 
         // player won
         if (playerControl.checkWinner()) {
@@ -406,7 +469,8 @@ const game = (() => {
         }
 
 
-        winnerDiv.innerText = winner.player; 
+        winnerDiv.innerText = `Winner: ${winner.player}`; 
+        shipsDiv.innerText = `Ships remaining: ${winner.gameboard.shipsRemaining()}`; 
     }
 
     // General functions

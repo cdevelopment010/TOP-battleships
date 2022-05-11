@@ -86,11 +86,26 @@ const playerController = () => {
         } else {
             validCoords = true; 
             status = players[opponent].gameboard.receiveAttack(x, y);
+            if (status == 'sunk') {
+                let {shipIndex} = players[opponent].gameboard.shipIndex(x, y); 
+                let shipSunk = players[opponent].gameboard.getShipIndex(shipIndex); 
+                console.log("ship sunk", shipSunk); 
+                shipSunk.coords.forEach(coord => {
+                    canvasHit(coord[0], coord[1], aiCanvas, status);
+                })
+            }
             canvasHit(x, y, aiCanvas, status); 
             // update player
             updatePlayer(); 
             // AI turn
             let { aiStatus, xAi, yAi } = randomAIMove(); 
+            if (aiStatus == 'sunk') {
+                let {shipIndex} = players[0].gameboard.shipIndex(xAi, yAi); 
+                let shipSunk = players[0].gameboard.getShipIndex(shipIndex); 
+                shipSunk.coords.forEach(coord => {
+                    canvasHit(coord[0], coord[1], playerCanvas, aiStatus);
+                })
+            }
             canvasHit(xAi, yAi, playerCanvas, aiStatus); 
             if (aiStatus == true) {
                 status = aiStatus; 

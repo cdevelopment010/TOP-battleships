@@ -5,13 +5,18 @@ const Gameboard = () => {
     // Create 10x10 grid
     //NOTE: I may make this adjustable in the future?
     let board = Array(10).fill('').map(x => Array(10).fill('')); 
+    let ships = []
     const getBoard = () => board;
-    const ships = []
 
 
 
     const getShips = () => ships;
+    const getShipIndex = (index) => ships[index]; 
 
+    const resetGameboard = () => {
+        board = Array(10).fill('').map(x => Array(10).fill('')); 
+        ships = [];
+    }
     //placeShip
 
     const placeShip = (x, y, len, direction) => {
@@ -49,14 +54,14 @@ const Gameboard = () => {
         } else {
             console.log('hit'); 
             status = 'hit'; 
-            for(let i = 0; i < ships.length; i++) {
-                for(let j = 0; j < ships[i].coords.length; j++){
-                    if (JSON.stringify([x, y])==JSON.stringify(ships[i].coords[j])) {
-                        coordIndex = j;
-                        shipIndex = i;
-                        board[x][y] = 'hit'; 
-                    }
+        for(let i = 0; i < ships.length; i++) {
+            for(let j = 0; j < ships[i].coords.length; j++){
+                if (JSON.stringify([x, y])==JSON.stringify(ships[i].coords[j])) {
+                    coordIndex = j;
+                    shipIndex = i;
+                    board[x][y] = 'hit'; 
                 }
+            }
             }
         
         }
@@ -77,12 +82,31 @@ const Gameboard = () => {
         return status; 
     }
 
+    const shipIndex = (x, y) => {
+
+        let coordIndex = -1; 
+        let shipIndex = -1;
+        for(let i = 0; i < ships.length; i++) {
+            for(let j = 0; j < ships[i].coords.length; j++){
+                if (JSON.stringify([x, y])==JSON.stringify(ships[i].coords[j])) {
+                    coordIndex = j;
+                    shipIndex = i;
+                }
+            }
+        }
+        return {coordIndex, shipIndex};
+    }
+
+    const shipsRemaining = () => {
+        return ships.filter(ship => !ship.shipToPlace.isSunk()).length; 
+    }
+
 
     const gameover = () => {
         // check if each ship has been sunk
         return ships.every(ship => ship.shipToPlace.isSunk());
     }
-    return {getBoard, placeShip, receiveAttack, gameover, getShips}
+    return {getBoard, placeShip, receiveAttack, gameover, getShips,shipsRemaining, resetGameboard, shipIndex, getShipIndex}
 }
 
 
