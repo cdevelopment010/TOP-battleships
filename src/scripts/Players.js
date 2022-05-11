@@ -27,7 +27,6 @@ const playerController = () => {
     const createPlayer = (name) => {
         player1 = Players(name); 
         players = [{player: player1, gameboard: player1Gameboard}, {player: player2, gameboard: player2Gameboard} ];
-        console.log(players); 
     }
 
     const getPlayers = () => {return players} ; 
@@ -55,7 +54,6 @@ const playerController = () => {
                     validCoords = true;
                 }
             }
-            console.log("random AI coords",x, y); 
             status = players[0].gameboard.receiveAttack(x, y); 
             updatePlayer(); 
             return {aiStatus: status, xAi: x, yAi: y}; 

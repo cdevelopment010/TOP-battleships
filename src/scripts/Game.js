@@ -1,8 +1,9 @@
 /* 
 NOTES:
 - touch screen drag doesn't work
-- AI ship placement error (some overlapping?)
-- new player btn
+- need to make mobile friendly
+- remove all the console.logs... 
+- make sure jest is still working...
 - refactor code...
 */
 
@@ -255,7 +256,7 @@ const game = (() => {
                 console.log("failed1:", x, y+k); 
                 shipOK = false;
             }
-            if ((direction !== 'vertical' || direction == 1) && (x+k > 9 || x+k < 0 || y < 0 || y >9)) {
+            if ((direction !== 'vertical' || direction == 1) && (x+k > 9 || x+k < 0 || y < 0 || y > 9)) {
                 console.log("failed2")
                 shipOK = false;
             }
@@ -290,7 +291,7 @@ const game = (() => {
     function populateGrid(x, y, size, direction) {
         let grid = []
         for (let i = 0; i < size; i++) {
-            if (direction === 'vertical') {
+            if (direction === 'vertical' || direction == 0) {
                 grid.push([x,y+i]) 
             } else {
                 grid.push([x+i,y]) 
@@ -327,9 +328,7 @@ const game = (() => {
         const aiCanvas = canvas[1];
         let gameover = false; 
 
-        // check gameboards - issue with rematch
-        console.table(playerControl.getPlayers()[0].gameboard.getBoard())
-        console.table(playerControl.getPlayers()[1].gameboard.getBoard())
+        
 
         // place player ships
         const playerShips = playerControl.getPlayers()[0].gameboard.getShips(); 
@@ -342,13 +341,7 @@ const game = (() => {
         //set up random AI ship placement
         placeAIShips(); 
         aiShipsGameboard(); 
-
-        //manage turns?
-            //manage gameover status
-
-
-
-
+        
 
         aiCanvas.removeEventListener('click', e => {
         

@@ -49,10 +49,8 @@ const Gameboard = () => {
         }
         // check if that spot contains a ship
         if (board[x][y] == '') {
-            console.log('miss'); 
             board[x][y] = 'miss'
         } else {
-            console.log('hit'); 
             status = 'hit'; 
         for(let i = 0; i < ships.length; i++) {
             for(let j = 0; j < ships[i].coords.length; j++){
