@@ -2,15 +2,14 @@
 NOTES:
 - touch screen drag doesn't work
 - AI ship placement error (some overlapping?)
-- issue with gameboard after restarting - thinks the spot has already been hit
-    - think I need to recreate the canvas elementsto stop the event listeners firing multiple times
+- new player btn
 - refactor code...
 */
 
 import playerController from "./Players";
 import styleCanvas from "./Canvas";
 const game = (() => {
-    const playerControl = playerController();      
+    let playerControl = playerController(); //changed from const to allow a new game      
     const usernameBtn = document.getElementById('btn-username');
     const btnToPage3 = document.getElementById('btn-to-page3');
     const username = document.getElementById('username'); 
@@ -84,6 +83,10 @@ const game = (() => {
     rematch.addEventListener('click', () => {
         nextScreen('page4', 'page2'); 
 
+        //reset player controller.
+        playerControl = playerController(); 
+        createPlayer(); 
+
         // reset gameboard
         playerControl.getPlayers()[0].gameboard.resetGameboard(); 
         playerControl.getPlayers()[1].gameboard.resetGameboard(); 
@@ -135,6 +138,8 @@ const game = (() => {
     function createPlayer() {
         playerControl.createPlayer(username.value); 
         console.log("players:", playerControl.getPlayers()[0].gameboard); 
+        
+        document.querySelector('.page3 .player p').innerText = `${username.value}'s board:`
     }
 
     function startGame() {
@@ -191,12 +196,6 @@ const game = (() => {
         })
 
         draggables.forEach((draggable, key) => {
-
-
-            // touch event
-            // draggable.addEventListener('touchstart', () => {
-            //     draggable.classList.add('dragging'); 
-            // })
             draggable.addEventListener('dragstart', () => {
                 //add class to tell we are currently dragging
                 draggable.classList.add('dragging'); 
@@ -229,31 +228,6 @@ const game = (() => {
                 
             })
 
-
-            // draggable.addEventListener('touchend', () => {
-            //     //remove class to tell we are currently dragging
-            //     draggable.classList.remove('dragging'); 
-            //     let direction = draggable.classList.contains('vertical') ? 'vertical' : 'horizontal'; 
-            //     let size = draggable.childElementCount; 
-
-
-            //     //add check to see if drop ship is valid; 
-            //     let check = checkPlacement(x/50, y/50, size, direction); 
-            //     if (check) {
-            //         dropShip(x, y, size, canvas, direction); 
-            //         updateShipObject(key, size, [x, y], direction);
-            //         let populated = populateGrid(x / 50, y/50, size, direction);
-            //         gridPopulated.push(...populated);  
-            //         draggable.innerHTML = ''; 
-            //         finishShipPlacement(); 
-                    
-            //     } else {
-            //         return; 
-            //     }
-
-                
-                
-            // })
         })
     }
 
@@ -395,6 +369,7 @@ const game = (() => {
                 console.log(gameover.status); 
                 if (gameover.status == true) {
                     nextScreen('page3', 'page4'); 
+                    replaceCanvasElements(); 
                     winner(); 
                 }
 
@@ -413,6 +388,7 @@ const game = (() => {
                 console.log(gameover.status); 
                 if (gameover.status == true) {
                     nextScreen('page3', 'page4'); 
+                    replaceCanvasElements(); 
                     winner(); 
                 }
 
@@ -420,6 +396,34 @@ const game = (() => {
         })
 
 
+    }
+
+    // replacing canvas elements on screen three due to duplicate onClick methods
+    function replaceCanvasElements() {
+        let playerCanvas = document.querySelector('.page3 .player');
+        let aiCanvas = document.querySelector('.page3 .AI');
+        playerCanvas.remove();
+        aiCanvas.remove();
+
+        // create elements again
+        const divPlayer = document.createElement('div'); 
+        const divAI = document.createElement('div'); 
+        const pPlayer = document.createElement('p'); 
+        const pAI = document.createElement('p'); 
+        const canvasPlayer = document.createElement('canvas'); 
+        const canvasAI = document.createElement('canvas'); 
+        
+        pPlayer.innerText = `${playerControl.getPlayers()[0].player}'s board:`
+        pAI.innerText = `AI board:`; 
+        divPlayer.classList.add('player');
+        divAI.classList.add('AI'); 
+        divPlayer.append(pPlayer); 
+        divPlayer.append(canvasPlayer);
+        divAI.append(pAI); 
+        divAI.append(canvasAI);
+
+        document.querySelector('.page3 .container').append(divPlayer);
+        document.querySelector('.page3 .container').append(divAI);
     }
 
     function placeAIShips() {
