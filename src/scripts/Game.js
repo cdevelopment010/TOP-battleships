@@ -1,6 +1,5 @@
 /* 
 NOTES:
-- touch screen drag doesn't work
 - remove all the console.logs... 
 - make sure jest is still working...
 - refactor code...
@@ -186,6 +185,16 @@ const game = (() => {
         this.classList.toggle('vertical'); 
     }
 
+    function getElLoc( el ) {
+        const rect = el.getBoundingClientRect(); 
+        return {
+            left: rect.left + window.scrollX, 
+            right: rect.right - window.scrollX, 
+            top: rect.top + window.scrollY, 
+            bottom: rect.bottom - window.scrollY
+        }
+    }
+
     function manageDrag() {
         let draggables = document.querySelectorAll('.draggable'); 
         let canvas = document.querySelector('.page2 canvas'); 
@@ -198,6 +207,47 @@ const game = (() => {
         })
 
         draggables.forEach((draggable, key) => {
+            //touch events
+            draggable.addEventListener('touchmove', ( e ) => {
+                e.preventDefault(); 
+                draggable.classList.add('dragging'); 
+                // lastmove = e;  
+            })
+
+
+            draggable.addEventListener('touchend', ( e ) => {                
+                draggable.classList.remove('dragging');                   
+                let { left, right, top, bottom } = getElLoc(canvas); 
+                x = Math.floor((e.changedTouches[0].pageX - left) / squareSize) * squareSize; 
+                y = Math.floor((e.changedTouches[0].pageY - top) / squareSize) * squareSize; 
+                console.log("x position touch", x); 
+                console.log("y position touch", y); 
+
+
+
+                let direction = draggable.classList.contains('vertical') ? 'vertical' : 'horizontal'; 
+                let size = draggable.childElementCount; 
+
+
+                //add check to see if drop ship is valid; 
+                let check = checkPlacement(x/squareSize, y/squareSize, size, direction, gridPopulated); 
+                if (check) {
+                    dropShip(x, y, size, canvas, direction); 
+                    updateShipObject(key, size, [x, y], direction, shipPlacement);
+                    let populated = populateGrid(x / squareSize, y/squareSize, size, direction);
+                    gridPopulated.push(...populated);  
+                    draggable.innerHTML = ''; 
+                    finishShipPlacement(); 
+                    draggable.removeEventListener('click',toggleVertical); 
+                    draggable.classList.remove('vertical'); 
+                    
+                } else {
+                    return; 
+                }
+
+            })
+
+            //mouse events for desktop
             draggable.addEventListener('dragstart', () => {
                 //add class to tell we are currently dragging
                 draggable.classList.add('dragging'); 
