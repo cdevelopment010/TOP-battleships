@@ -3,7 +3,7 @@ function canvasHit(x, y, canvas, status) {
     let style = status == 'miss' ? '#EAEBAC' : '#DE7272'; 
     let squareSize; 
 
-    if (window.innerWidth < 500) {
+    if (window.innerWidth < 700) {
         squareSize = 30; 
     } else {
         squareSize = 50; 

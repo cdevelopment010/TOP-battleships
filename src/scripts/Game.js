@@ -7,6 +7,8 @@ NOTES:
 
 import playerController from "./Players";
 import styleCanvas from "./Canvas";
+import nextScreen from "./nextScreen";
+import getElLoc from "./getEl"; 
 const game = (() => {
     let playerControl = playerController(); //changed from const to allow a new game      
     const usernameBtn = document.getElementById('btn-username');
@@ -15,6 +17,7 @@ const game = (() => {
     const rematch = document.getElementById('rematch-btn'); 
     const newPlayer = document.getElementById('new-player-btn'); 
     let squareSize, canvasSize; 
+    
 
     let gridPopulated = []; //use this to check coords of ship placement and to place on gameboard before screen 3; 
     let gridPopulatedAI = []; //use this to check coords of ship placement and to place on gameboard before screen 3; 
@@ -74,7 +77,7 @@ const game = (() => {
     }
 
 
-    if (window.innerWidth < 500) {
+    if (window.innerWidth < 700) {
         canvasSize = '300';
         squareSize = 30; 
     } else {
@@ -82,6 +85,13 @@ const game = (() => {
         squareSize = 50; 
 
     }
+
+    username.addEventListener('keydown', ( e ) => {
+        if (e.key == 'Enter') {
+            e.preventDefault(); 
+        }
+        validateUsername(); 
+    })
 
     usernameBtn.addEventListener('click', startGame); 
     btnToPage3.addEventListener('click', () => {
@@ -123,13 +133,27 @@ const game = (() => {
 
     function validateUsername() {
         let pass = true; 
-        if (username.value.length == 0) {
-            alert('must input a username'); 
+        let errors = []; 
+        let ul = document.querySelector('.err-msg'); 
+        ul.innerHTML = ''; 
+
+        if (String(username.value).trim() == '') {
+            errors.push('username must not be blank'); 
             pass = false;
         }
         if (username.value.length < 3){
-            alert('username must be greater than 3'); 
+            errors.push('username must be greater than 3'); 
             pass=false;
+        }
+
+
+        for(let err of errors) {
+            console.log(err); 
+            let li = document.createElement('li'); 
+
+            li.innerText = err; 
+            ul.append(li)
+
         }
 
         return pass; 
@@ -185,15 +209,7 @@ const game = (() => {
         this.classList.toggle('vertical'); 
     }
 
-    function getElLoc( el ) {
-        const rect = el.getBoundingClientRect(); 
-        return {
-            left: rect.left + window.scrollX, 
-            right: rect.right - window.scrollX, 
-            top: rect.top + window.scrollY, 
-            bottom: rect.bottom - window.scrollY
-        }
-    }
+    
 
     function manageDrag() {
         let draggables = document.querySelectorAll('.draggable'); 
@@ -220,10 +236,6 @@ const game = (() => {
                 let { left, right, top, bottom } = getElLoc(canvas); 
                 x = Math.floor((e.changedTouches[0].pageX - left) / squareSize) * squareSize; 
                 y = Math.floor((e.changedTouches[0].pageY - top) / squareSize) * squareSize; 
-                console.log("x position touch", x); 
-                console.log("y position touch", y); 
-
-
 
                 let direction = draggable.classList.contains('vertical') ? 'vertical' : 'horizontal'; 
                 let size = draggable.childElementCount; 
@@ -401,6 +413,8 @@ const game = (() => {
         //set up random AI ship placement
         placeAIShips(); 
         aiShipsGameboard(); 
+
+        document.querySelector('.player .overlay').classList.remove('hidden'); 
         
 
         aiCanvas.removeEventListener('click', e => {
@@ -408,7 +422,7 @@ const game = (() => {
             if (playerControl.getCurrentPlayer() == 0) {
                 let x = Math.floor(e.offsetX / squareSize);
                 let y = Math.floor(e.offsetY / squareSize);
-                gameover = playerControl.attack(x, y); 
+                gameover =  playerControl.attack(x, y); 
                 // playerControl.updatePlayer(); 
                 console.log(gameover.status); 
                 if (gameover.status == true) {
@@ -422,12 +436,12 @@ const game = (() => {
 
         //on click to signal attack
         
-        aiCanvas.addEventListener('click', e => {
+        aiCanvas.addEventListener('click', async e => {
             
             if (playerControl.getCurrentPlayer() == 0) {
                 let x = Math.floor(e.offsetX / squareSize);
                 let y = Math.floor(e.offsetY / squareSize);
-                gameover = playerControl.attack(x, y); 
+                gameover = await playerControl.attack(x, y); 
                 // playerControl.updatePlayer(); 
                 console.log(gameover.status); 
                 if (gameover.status == true) {
@@ -524,10 +538,7 @@ const game = (() => {
     // General functions
 
 
-    function nextScreen(curr, next) {
-        document.querySelector(`.${curr}`).classList.add('hidden'); 
-        document.querySelector(`.${next}`).classList.remove('hidden'); 
-    }
+    
 
     function reset() {
         //delete ship containers then remake - should solve issue with duplicating event listeners

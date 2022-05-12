@@ -24,6 +24,11 @@ const playerController = () => {
     let currentPlayer = 0; 
     let opponent = (currentPlayer + 1) % 2; 
 
+
+    function delay(time) {
+        return new Promise(resolve => setTimeout(resolve, time));
+      }
+
     const createPlayer = (name) => {
         player1 = Players(name); 
         players = [{player: player1, gameboard: player1Gameboard}, {player: player2, gameboard: player2Gameboard} ];
@@ -39,6 +44,8 @@ const playerController = () => {
         return players[opponent].gameboard.gameover() == true ? true : false
     }; 
     const randomAIMove = () => {
+
+        
         let validCoords = false;
         let status; 
         let x = Math.floor(Math.random()*10); 
@@ -75,7 +82,7 @@ const playerController = () => {
         return valid; 
     }
 
-    const attack = (x, y) => {
+    const attack = async (x, y) => {
         let validCoords = false;
         let status;
         if(players[opponent].gameboard.getBoard()[x][y] == 'hit' || players[opponent].gameboard.getBoard()[x][y] == 'miss') {
@@ -95,7 +102,11 @@ const playerController = () => {
             canvasHit(x, y, aiCanvas, status); 
             // update player
             updatePlayer(); 
-            // AI turn
+                // AI turn
+
+            document.querySelector('.player .overlay').classList.add('hidden')
+            document.querySelector('.AI .overlay').classList.remove('hidden')
+            await delay(250); 
             let { aiStatus, xAi, yAi } = randomAIMove(); 
             if (aiStatus == 'sunk') {
                 let {shipIndex} = players[0].gameboard.shipIndex(xAi, yAi); 
@@ -108,7 +119,13 @@ const playerController = () => {
             if (aiStatus == true) {
                 status = aiStatus; 
             }
+
+            await delay(350); 
+            document.querySelector('.player .overlay').classList.remove('hidden')
+            document.querySelector('.AI .overlay').classList.add('hidden')
+
             return {status, aiStatus, xAi, yAi};
+            
         }
     }
 

@@ -98,6 +98,16 @@ article {
     }
 }
 
+.btn-group {
+    display: flex; 
+    flex-direction: column;
+    gap: 10px; 
+    align-items: flex-start;
+    @include resize('laptop') {
+        flex-direction: row;
+    }
+}
+
 //ships 
 .ship-container {
     display: flex; 
@@ -154,8 +164,31 @@ article {
     opacity: 0.5;
 }
 
+
+//input error message
+.err-msg {
+    color: red;     
+    font-weight: bold; 
+
+    li {
+        list-style-position: inside;
+    }
+}
+
+
+//overlay
+.overlay {
+    background-color: $body-bg;
+    opacity: 0.5;
+    position: fixed;
+}
+
 // footer
 footer {
+    img {
+        height: 1.5em; 
+        width: 1.5em; 
+    }
 
     li {
         list-style-type: none;
@@ -163,7 +196,7 @@ footer {
 
         &:hover {
             color: $btn-disabled; 
-        }
+        }   
     }
 
     ul {

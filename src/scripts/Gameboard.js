@@ -73,7 +73,6 @@ const Gameboard = () => {
             }
         }
         if(gameover()) {
-            alert('gameover!'); 
             return true;
         }
 

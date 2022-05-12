@@ -17,6 +17,8 @@
             <form action="#" autocomplete="off">
                 <label for="username">Enter your username:</label>
                 <input type="text" name="username" id="username">
+                <ul class="err-msg">
+                </ul>
                 <button type="button" class="btn-primary" id="btn-username"><i class="fa-solid fa-arrow-right-long fa-2x"></i></button>
             </form>
         </section>
@@ -25,6 +27,7 @@
             <h1>Get ready for battle</h1>
             <p>Place your ships</p>
             <canvas class="board"></canvas>
+            <div class="overlay"></div>
 
             <button type="button" id="btn-to-page3" class="btn-primary hidden">Let's battle!</button>
             <div class="container">
@@ -44,10 +47,12 @@
                 <div class="player">
                     <p>Player</p>
                     <canvas></canvas>
+                    <div class="overlay"></div>
                 </div>
                 <div class="AI">
                     <p>AI</p>
                     <canvas></canvas>
+                    <div class="overlay"></div>
                 </div>
             </div>
         </section>
@@ -63,15 +68,18 @@
         </section>
     </main>
 
+
     <footer>
         <ul class="TOP">
-            <li></li>
+            <li>
+                <a href="https://www.theodinproject.com/" target="_blank"><img src="https://www.theodinproject.com/mstile-310x310.png" alt="TOP-logo"></a>
+            </li>
         </ul>
 
         <ul class="Socials">
-            <li><a href="#" target="_blank"><i class="fa-solid fa-globe"></i></a></li>
-            <li><a href="#" target="_blank"><i class="fa-brands fa-youtube"></i></a></li>
-            <li><a href="#" target="_blank"><i class="fa-brands fa-github"></i></a></li>
+            <li><a href="https://craig-davison.com/" target="_blank"><i class="fa-solid fa-globe"></i></a></li>
+            <li><a href="https://www.youtube.com/channel/UCtHK20C4Dw4fcs7kZDl4QPQ" target="_blank"><i class="fa-brands fa-youtube"></i></a></li>
+            <li><a href="https://github.com/cdevelopment010" target="_blank"><i class="fa-brands fa-github"></i></a></li>
         </ul>
     </footer>
 
