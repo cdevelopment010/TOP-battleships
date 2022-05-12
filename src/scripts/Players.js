@@ -10,11 +10,11 @@ const Players = (name) => {
 }
 
 
-const playerController = () => {
-    const canvas = styleCanvas('.page3'); 
-        
-    const playerCanvas = canvas[0];
-    const aiCanvas = canvas[1];
+const playerController = () => { 
+        // this seems to call the canvas twice? 
+    const canvas2 = styleCanvas('.page3');
+    const playerCanvas = canvas2[0];
+    const aiCanvas = canvas2[1];
 
     let player1; 
     let player1Gameboard = Gameboard();

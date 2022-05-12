@@ -18,9 +18,7 @@ function styleCanvas(loc) {
             
         }
 
-
         const overlay = document.querySelectorAll(`${loc} .overlay`); 
-        overlay[key].classList.add('hidden'); 
         const {left, right, top, bottom} = getElLoc(c); 
         overlay[key].style.left = left + "px"; 
         overlay[key].style.height = c.height + "px"; 

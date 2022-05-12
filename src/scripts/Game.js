@@ -1,8 +1,8 @@
 /* 
 NOTES:
+- refactor code...
 - remove all the console.logs... 
 - make sure jest is still working...
-- refactor code...
 */
 
 import playerController from "./Players";
@@ -86,7 +86,7 @@ const game = (() => {
 
     }
 
-    username.addEventListener('keydown', ( e ) => {
+    username.addEventListener('keyup', ( e ) => {
         if (e.key == 'Enter') {
             e.preventDefault(); 
         }
@@ -121,7 +121,7 @@ const game = (() => {
         reset(); 
         generateShips(); 
         //create canvas to place ships
-        let canvas = styleCanvas('.page2');  
+        styleCanvas('.page2');  
 
     })
 
@@ -145,10 +145,12 @@ const game = (() => {
             errors.push('username must be greater than 3'); 
             pass=false;
         }
-
-
+        
+        if(/\s/ig.test(username.value)) {
+            errors.push('username must not contain spaces');
+            pass=false;
+        }
         for(let err of errors) {
-            console.log(err); 
             let li = document.createElement('li'); 
 
             li.innerText = err; 
@@ -460,6 +462,7 @@ const game = (() => {
     function replaceCanvasElements() {
         let playerCanvas = document.querySelector('.page3 .player');
         let aiCanvas = document.querySelector('.page3 .AI');
+        
         playerCanvas.remove();
         aiCanvas.remove();
 
@@ -470,6 +473,11 @@ const game = (() => {
         const pAI = document.createElement('p'); 
         const canvasPlayer = document.createElement('canvas'); 
         const canvasAI = document.createElement('canvas'); 
+        const playerOverlay = document.createElement('div');
+        const aiOverlay = document.createElement('div');
+
+        playerOverlay.className = "overlay hidden";
+        aiOverlay.className = "overlay hidden";
         
         pPlayer.innerText = `${playerControl.getPlayers()[0].player}'s board:`
         pAI.innerText = `AI board:`; 
@@ -477,8 +485,10 @@ const game = (() => {
         divAI.classList.add('AI'); 
         divPlayer.append(pPlayer); 
         divPlayer.append(canvasPlayer);
+        divPlayer.append(playerOverlay);
         divAI.append(pAI); 
         divAI.append(canvasAI);
+        divAI.append(aiOverlay);
 
         document.querySelector('.page3 .container').append(divPlayer);
         document.querySelector('.page3 .container').append(divAI);
