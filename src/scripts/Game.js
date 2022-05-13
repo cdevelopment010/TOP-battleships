@@ -239,7 +239,7 @@ const game = (() => {
                 x = Math.floor((e.changedTouches[0].pageX - left) / squareSize) * squareSize; 
                 y = Math.floor((e.changedTouches[0].pageY - top) / squareSize) * squareSize; 
 
-                let direction = draggable.classList.contains('vertical') ? 'vertical' : 'horizontal'; 
+                let direction = draggable.classList.contains('vertical') ? 0 : 1; 
                 let size = draggable.childElementCount; 
 
 
@@ -270,7 +270,7 @@ const game = (() => {
             draggable.addEventListener('dragend', () => {
                 //remove class to tell we are currently dragging
                 draggable.classList.remove('dragging'); 
-                let direction = draggable.classList.contains('vertical') ? 'vertical' : 'horizontal'; 
+                let direction = draggable.classList.contains('vertical') ? 0 : 1; 
                 let size = draggable.childElementCount; 
 
 
@@ -300,14 +300,14 @@ const game = (() => {
     function updateShipObject(key, size, coords, direct, obj) {
         obj[`ship${key}`].length = size;
         obj[`ship${key}`].position = coords;
-        obj[`ship${key}`].direction = direct=='vertical' || direct == 0 ? 0 : 1;
+        obj[`ship${key}`].direction = direct == 0 ? 0 : 1;
     }
 
     function dropShip(x, y, size, canvas, direction) {
         const ctx = canvas.getContext("2d")
         for (let i = 0; i < size; i++) {
             ctx.beginPath(); 
-            if (direction === 'vertical' || direction === 0 ) {
+            if (direction === 0 ) {
                 ctx.rect(x, y+(squareSize*i), squareSize, squareSize); 
             } else {
                 ctx.rect(x+(squareSize*i), y, squareSize, squareSize); 
@@ -326,11 +326,11 @@ const game = (() => {
         //ship goes off the board
         for (let k = 0; k < size; k++) {
 
-            if ((direction === 'vertical' || direction == 0) && (x > 9 || x < 0 || y+k < 0 || y+k > 9)) {
+            if ((direction == 0) && (x > 9 || x < 0 || y+k < 0 || y+k > 9)) {
                 console.log("failed1:", x, y+k); 
                 shipOK = false;
             }
-            if ((direction !== 'vertical' || direction == 1) && (x+k > 9 || x+k < 0 || y < 0 || y > 9)) {
+            if ((direction == 1) && (x+k > 9 || x+k < 0 || y < 0 || y > 9)) {
                 console.log("failed2")
                 shipOK = false;
             }
@@ -339,7 +339,7 @@ const game = (() => {
         // overlaps with ship already placed
         gridCheck.forEach(coord => {
             for (let i = 0; i < size; i++) {
-                if (direction === 'vertical' || direction == 0) {
+                if (direction == 0) {
                     if(coord[0] == x && coord[1]== y+i) {
                         console.log("failed3")
                         shipOK = false;
@@ -365,7 +365,7 @@ const game = (() => {
     function populateGrid(x, y, size, direction) {
         let grid = []
         for (let i = 0; i < size; i++) {
-            if (direction === 'vertical' || direction == 0) {
+            if (direction == 0) {
                 grid.push([x,y+i]) 
             } else {
                 grid.push([x+i,y]) 
