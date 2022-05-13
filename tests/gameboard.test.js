@@ -1,47 +1,47 @@
-const Gameboard = require('../code/Gameboard'); 
+const Gameboard = require('../src/scripts/Gameboard'); 
 
 // console.log(Gameboard().getBoard()); 
 
 
-describe.skip('Gameboard', () => {
+describe('Gameboard', () => {
     test('contains property getBoard', () => {
         expect(Gameboard()).toHaveProperty('getBoard')
     })
 
-    test('Initiall, board should be 10x10 null', () => {
+    test('Initiall, board should be 10x10 ""', () => {
         expect(Gameboard().getBoard()).toEqual(
             [
-                [null, null, null,null, null, null,null, null, null,null],
-                [null, null, null,null, null, null,null, null, null,null],
-                [null, null, null, null, null, null,null, null, null,null],
-                [null, null, null,null, null, null,null, null, null,null],
-                [null, null, null,null, null, null,null, null, null,null],
-                [null, null, null,null, null, null,null, null, null,null],
-                [null, null, null,null, null, null,null, null, null,null],
-                [null, null, null,null, null, null,null, null, null,null],
-                [null, null, null,null, null, null,null, null, null,null],
-                [null, null, null,null, null, null,null, null, null,null]
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '', '', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '','']
               ])
     })
 
     test('place ship in upper left corner', () => {
         let board = Gameboard(); 
-        // console.log(board.getBoard()[0])
+        console.log(board.getBoard()[0])
         board.placeShip(0,0,3); 
-        // console.log(board.getBoard());
-    //     expect(board.getBoard()).toEqual(
-    //         [
-    //             ['SHIP', 'SHIP', 'SHIP',null, null, null,null, null, null,null],
-    //             [null, null, null,null, null, null,null, null, null,null],
-    //             [null, null, null, null, null, null,null, null, null,null],
-    //             [null, null, null,null, null, null,null, null, null,null],
-    //             [null, null, null,null, null, null,null, null, null,null],
-    //             [null, null, null,null, null, null,null, null, null,null],
-    //             [null, null, null,null, null, null,null, null, null,null],
-    //             [null, null, null,null, null, null,null, null, null,null],
-    //             [null, null, null,null, null, null,null, null, null,null],
-    //             [null, null, null,null, null, null,null, null, null,null]
-    //           ])
+        console.log(board.getBoard());
+        expect(board.getBoard()).toEqual(
+            [
+                ['SHIP', 'SHIP', 'SHIP','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '', '', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '',''],
+                ['', '', '','', '', '','', '', '','']
+              ])
     })
 
 

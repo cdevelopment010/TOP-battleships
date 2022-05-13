@@ -1,14 +1,10 @@
-// import styleCanvas from "./Canvas";
-// import canvasHit from "./CanvasHit";
 const styleCanvas = require('./Canvas'); 
 const canvasHit = require('./CanvasHit'); 
 const Gameboard = require("./Gameboard");
-// import Gameboard from "./Gameboard";
 
 const Players = (name) => {
     return name;
 }
-
 
 const playerController = () => { 
         // this seems to call the canvas twice? 
@@ -44,53 +40,44 @@ const playerController = () => {
         return players[opponent].gameboard.gameover() == true ? true : false
     }; 
     const randomAIMove = () => {
-
-        
         let validCoords = false;
         let status; 
         let x = Math.floor(Math.random()*10); 
         let y = Math.floor(Math.random()*10); 
-        // pause for one second 
-        // setTimeout(()=> {
-            while (!validCoords) {
-                if(players[0].gameboard.getBoard()[x][y] == 'hit' | players[0].gameboard.getBoard()[x][y] == 'miss') {
-                    console.log('try again AI...'); 
-                    x = Math.floor(Math.random()*10); 
-                    y = Math.floor(Math.random()*10); 
-                } else {
-                    validCoords = true;
-                }
+        while (!validCoords) {
+            if(!isValidAttack(x,y)) {
+                console.log('try again AI...'); 
+                x = Math.floor(Math.random()*10); 
+                y = Math.floor(Math.random()*10); 
+            } else {
+                validCoords = true;
             }
-            status = players[0].gameboard.receiveAttack(x, y); 
-            updatePlayer(); 
-            return {aiStatus: status, xAi: x, yAi: y}; 
-        // }, 1000)
-        // update player turn 
-
+        }
+        status = players[0].gameboard.receiveAttack(x, y); 
+        updatePlayer(); 
+        return {aiStatus: status, xAi: x, yAi: y}; 
     }
 
 
     const isValidAttack =  (x, y) => {
         let valid = false;
-
         if (players[opponent].gameboard.getBoard()[x][y] == 'hit' || players[opponent].gameboard.getBoard()[x][y] == 'miss') {
             return valid;
         } else {
             valid = true; 
         }
-
         return valid; 
     }
 
     const attack = async (x, y) => {
         let validCoords = false;
         let status;
-        if(players[opponent].gameboard.getBoard()[x][y] == 'hit' || players[opponent].gameboard.getBoard()[x][y] == 'miss') {
-            //try again - coordinates aren't valid;
-            console.log(`Try again! You have already attacked this spot ${x}, ${y}`); 
+        if(!isValidAttack(x,y)) {
+            return;
         } else {
             validCoords = true; 
             status = players[opponent].gameboard.receiveAttack(x, y);
+            //If the ship is sunk need the index to update the canvas 
             if (status == 'sunk') {
                 let {shipIndex} = players[opponent].gameboard.shipIndex(x, y); 
                 let shipSunk = players[opponent].gameboard.getShipIndex(shipIndex); 
@@ -102,8 +89,7 @@ const playerController = () => {
             canvasHit(x, y, aiCanvas, status); 
             // update player
             updatePlayer(); 
-                // AI turn
-
+            // AI turn
             document.querySelector('.player .overlay').classList.add('hidden')
             document.querySelector('.AI .overlay').classList.remove('hidden')
             await delay(250); 

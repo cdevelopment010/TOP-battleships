@@ -1,14 +1,12 @@
 /* 
 NOTES:
 - refactor code...
-- remove all the console.logs... 
 - make sure jest is still working...
 */
 
 import playerController from "./Players";
 import styleCanvas from "./Canvas";
-import nextScreen from "./nextScreen";
-import getElLoc from "./getEl"; 
+import generalFuncs from "./generalFuncs";
 const game = (() => {
     let playerControl = playerController(); //changed from const to allow a new game      
     const usernameBtn = document.getElementById('btn-username');
@@ -76,7 +74,8 @@ const game = (() => {
         }
     }
 
-
+    //Get the screen size
+    // this helps define canvas & square size
     if (window.innerWidth < 700) {
         canvasSize = '300';
         squareSize = 30; 
@@ -86,21 +85,24 @@ const game = (() => {
 
     }
 
+
+
+    //event listeners
     username.addEventListener('keyup', ( e ) => {
         if (e.key == 'Enter') {
             e.preventDefault(); 
         }
-        validateUsername(); 
+        generalFuncs().validateUsername(); 
     })
 
     usernameBtn.addEventListener('click', startGame); 
     btnToPage3.addEventListener('click', () => {
-        nextScreen('page2', 'page3'); 
+        generalFuncs().nextScreen('page2', 'page3'); 
         battlePage(); 
     }); 
 
     newPlayer.addEventListener('click', () => {
-        nextScreen('page4', 'page1'); 
+        generalFuncs().nextScreen('page4', 'page1'); 
         username.value = ''; 
         //reset player controller.
         playerControl = playerController(); 
@@ -108,17 +110,11 @@ const game = (() => {
 
 
     rematch.addEventListener('click', () => {
-        nextScreen('page4', 'page2'); 
-
+        generalFuncs().nextScreen('page4', 'page2'); 
         //reset player controller.
         playerControl = playerController(); 
         createPlayer(); 
-
-        // reset gameboard
-        playerControl.getPlayers()[0].gameboard.resetGameboard(); 
-        playerControl.getPlayers()[1].gameboard.resetGameboard(); 
-
-        reset(); 
+        generalFuncs().reset(); 
         generateShips(); 
         //create canvas to place ships
         styleCanvas('.page2');  
@@ -127,62 +123,28 @@ const game = (() => {
 
 
 
-
-
-    // functions for screen 1 - username/welcome page 
-
-    function validateUsername() {
-        let pass = true; 
-        let errors = []; 
-        let ul = document.querySelector('.err-msg'); 
-        ul.innerHTML = ''; 
-
-        if (String(username.value).trim() == '') {
-            errors.push('username must not be blank'); 
-            pass = false;
-        }
-        if (username.value.length < 3){
-            errors.push('username must be greater than 3'); 
-            pass=false;
-        }
-        
-        if(/\s/ig.test(username.value)) {
-            errors.push('username must not contain spaces');
-            pass=false;
-        }
-        for(let err of errors) {
-            let li = document.createElement('li'); 
-
-            li.innerText = err; 
-            ul.append(li)
-
-        }
-
-        return pass; 
-    }
-
     function createPlayer() {
         playerControl.createPlayer(username.value); 
-        console.log("players:", playerControl.getPlayers()[0].gameboard); 
-        
         document.querySelector('.page3 .player p').innerText = `${username.value}'s board:`
     }
 
     function startGame() {
-        reset(); 
-        let usernamePass = validateUsername(); 
+        generalFuncs().reset(); 
+        let usernamePass = generalFuncs().validateUsername(); 
         if (!usernamePass) {
             return; 
         }
         //create player 
         createPlayer(); 
         // go to second screen; 
-        nextScreen('page1', 'page2'); 
+        generalFuncs().nextScreen('page1', 'page2'); 
         //create 5 ships to user to place        
         generateShips(); 
         //create canvas to place ships
-        let canvas = styleCanvas('.page2');    
+        styleCanvas('.page2');    
     }
+
+    
 
 
     // functions for screen 2 - user to place ships
@@ -232,10 +194,10 @@ const game = (() => {
                 // lastmove = e;  
             })
 
-
+            //find x,y placement on touch end
             draggable.addEventListener('touchend', ( e ) => {                
                 draggable.classList.remove('dragging');                   
-                let { left, right, top, bottom } = getElLoc(canvas); 
+                let { left, right, top, bottom } = generalFuncs().getElLoc(canvas); 
                 x = Math.floor((e.changedTouches[0].pageX - left) / squareSize) * squareSize; 
                 y = Math.floor((e.changedTouches[0].pageY - top) / squareSize) * squareSize; 
 
@@ -246,14 +208,7 @@ const game = (() => {
                 //add check to see if drop ship is valid; 
                 let check = checkPlacement(x/squareSize, y/squareSize, size, direction, gridPopulated); 
                 if (check) {
-                    dropShip(x, y, size, canvas, direction); 
-                    updateShipObject(key, size, [x, y], direction, shipPlacement);
-                    let populated = populateGrid(x / squareSize, y/squareSize, size, direction);
-                    gridPopulated.push(...populated);  
-                    draggable.innerHTML = ''; 
-                    finishShipPlacement(); 
-                    draggable.removeEventListener('click',toggleVertical); 
-                    draggable.classList.remove('vertical'); 
+                    placeValidShips(draggable, x, y, size, canvas, direction, shipPlacement, key); 
                     
                 } else {
                     return; 
@@ -277,15 +232,7 @@ const game = (() => {
                 //add check to see if drop ship is valid; 
                 let check = checkPlacement(x/squareSize, y/squareSize, size, direction, gridPopulated); 
                 if (check) {
-                    dropShip(x, y, size, canvas, direction); 
-                    updateShipObject(key, size, [x, y], direction, shipPlacement);
-                    let populated = populateGrid(x / squareSize, y/squareSize, size, direction);
-                    gridPopulated.push(...populated);  
-                    draggable.innerHTML = ''; 
-                    finishShipPlacement(); 
-                    draggable.removeEventListener('click',toggleVertical); 
-                    draggable.classList.remove('vertical'); 
-                    
+                    placeValidShips(draggable, x, y, size, canvas, direction, shipPlacement, key);                     
                 } else {
                     return; 
                 }
@@ -295,6 +242,15 @@ const game = (() => {
             })
 
         })
+    }
+
+    function placeValidShips(el, x, y, size, canvas, direction, shipPlacement,key ) {
+        dropShip(x, y, size, canvas, direction); 
+        updateShipObject(key, size, [x, y], direction, shipPlacement);
+        let populated = populateGrid(x / squareSize, y/squareSize, size, direction);
+        gridPopulated.push(...populated);  
+        el.innerHTML = ''; 
+        finishShipPlacement(); 
     }
 
     function updateShipObject(key, size, coords, direct, obj) {
@@ -393,16 +349,11 @@ const game = (() => {
 
 
     // functions for screen 3 - main battle
-
-
-
     function battlePage() {
         const canvas = styleCanvas('.page3'); 
         const playerCanvas = canvas[0];
         const aiCanvas = canvas[1];
         let gameover = false; 
-
-        
 
         // place player ships
         const playerShips = playerControl.getPlayers()[0].gameboard.getShips(); 
@@ -417,37 +368,16 @@ const game = (() => {
         aiShipsGameboard(); 
 
         document.querySelector('.player .overlay').classList.remove('hidden'); 
-        
 
-        aiCanvas.removeEventListener('click', e => {
-        
-            if (playerControl.getCurrentPlayer() == 0) {
-                let x = Math.floor(e.offsetX / squareSize);
-                let y = Math.floor(e.offsetY / squareSize);
-                gameover =  playerControl.attack(x, y); 
-                // playerControl.updatePlayer(); 
-                console.log(gameover.status); 
-                if (gameover.status == true) {
-                    nextScreen('page3', 'page4'); 
-                    replaceCanvasElements(); 
-                    winner(); 
-                }
-
-            }    
-        })
-
-        //on click to signal attack
-        
+        //on click to signal attack        
         aiCanvas.addEventListener('click', async e => {
             
             if (playerControl.getCurrentPlayer() == 0) {
                 let x = Math.floor(e.offsetX / squareSize);
                 let y = Math.floor(e.offsetY / squareSize);
                 gameover = await playerControl.attack(x, y); 
-                // playerControl.updatePlayer(); 
-                console.log(gameover.status); 
                 if (gameover.status == true) {
-                    nextScreen('page3', 'page4'); 
+                    generalFuncs().nextScreen('page3', 'page4'); 
                     replaceCanvasElements(); 
                     winner(); 
                 }
@@ -544,35 +474,6 @@ const game = (() => {
         winnerDiv.innerText = `Winner: ${winner.player}`; 
         shipsDiv.innerText = `Ships remaining: ${winner.gameboard.shipsRemaining()}`; 
     }
-
-    // General functions
-
-
-    
-
-    function reset() {
-        //delete ship containers then remake - should solve issue with duplicating event listeners
-        let shipcontainers = document.querySelectorAll('.page .ship-container'); 
-        shipcontainers.forEach(container => {
-            container.remove(); 
-        })
-
-        for (let i = 0; i<5; i++) {
-            let div = document.createElement('div'); 
-            div.classList.add('ship-container');
-            document.querySelector('.page2 .container').append(div); 
-        }
-
-
-        //reset variables
-        gridPopulated = [];
-        gridPopulatedAI = []; 
-
-        document.querySelector('.page2 .container').classList.remove('hidden');
-        document.querySelector('.page2 button').classList.add('hidden');
-
-    }
-
 
     return {
         playerControl

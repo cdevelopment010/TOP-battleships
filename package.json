@@ -7,6 +7,9 @@
     "test": "jest", 
     "webpack:watch": "webpack --watch"
   },
+  "jest": {
+    "verbose": true
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -5,11 +5,9 @@ const Gameboard = () => {
     // Create 10x10 grid
     //NOTE: I may make this adjustable in the future?
     let board = Array(10).fill('').map(x => Array(10).fill('')); 
-    let ships = []
+    let ships = []; 
+
     const getBoard = () => board;
-
-
-
     const getShips = () => ships;
     const getShipIndex = (index) => ships[index]; 
 
@@ -17,8 +15,7 @@ const Gameboard = () => {
         board = Array(10).fill('').map(x => Array(10).fill('')); 
         ships = [];
     }
-    //placeShip
-
+    
     const placeShip = (x, y, len, direction) => {
         let shipToPlace = ship(len); 
         let coords = [];
@@ -44,7 +41,6 @@ const Gameboard = () => {
         let shipIndex = -1;
         // check if it hasn't already been in that spot
         if (board[x][y] == 'hit' || board[x][y] == 'miss') {
-            console.log('try again...'); 
             return; 
         }
         // check if that spot contains a ship

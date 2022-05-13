@@ -1,4 +1,4 @@
-const getElLoc = require('./getEl'); 
+const generalFuncs = require('./generalFuncs'); 
 
 function styleCanvas(loc) {
     let canvas = document.querySelectorAll(`${loc} canvas`); 
@@ -19,7 +19,7 @@ function styleCanvas(loc) {
         }
 
         const overlay = document.querySelectorAll(`${loc} .overlay`); 
-        const {left, right, top, bottom} = getElLoc(c); 
+        const {left, right, top, bottom} = generalFuncs().getElLoc(c); 
         overlay[key].style.left = left + "px"; 
         overlay[key].style.height = c.height + "px"; 
         overlay[key].style.top = top + "px"; 

@@ -1,4 +1,4 @@
-const ship = require('../code/ship'); 
+const ship = require('../src/scripts/ship'); 
 // console.log(ship(4)); 
 // console.log("ship4 sunk? ", ship(4).isSunk()); 
 // console.log("ship4 hit? ", ship(4).isHit()); 
